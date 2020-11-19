@@ -1,0 +1,3 @@
+﻿  pch.cpp
+  dllmain.cpp
+  mydll.vcxproj -> E:\tmp\dll_inject_test\mydll\Debug\mydll.dll
