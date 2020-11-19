@@ -1,7 +1,7 @@
 ﻿  inject.cpp
-e:\tmp\dll_inject_test\inject\inject.cpp(84): warning C4311: “类型强制转换”: 从“LPVOID”到“unsigned int”的指针截断
-e:\tmp\dll_inject_test\inject\inject.cpp(84): warning C4302: “类型强制转换”: 从“LPVOID”到“unsigned int”截断
-e:\tmp\dll_inject_test\inject\inject.cpp(152): warning C4311: “类型强制转换”: 从“LPVOID”到“unsigned int”的指针截断
-e:\tmp\dll_inject_test\inject\inject.cpp(152): warning C4302: “类型强制转换”: 从“LPVOID”到“unsigned int”截断
-e:\tmp\dll_inject_test\inject\inject.cpp(194): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-  inject.vcxproj -> E:\tmp\dll_inject_test\mydll\x64\Debug\inject.exe
+e:\tmp\dllinjection\inject\inject.cpp(67): warning C4311: “类型强制转换”: 从“LPVOID”到“unsigned int”的指针截断
+e:\tmp\dllinjection\inject\inject.cpp(67): warning C4302: “类型强制转换”: 从“LPVOID”到“unsigned int”截断
+e:\tmp\dllinjection\inject\inject.cpp(135): warning C4311: “类型强制转换”: 从“LPVOID”到“unsigned int”的指针截断
+e:\tmp\dllinjection\inject\inject.cpp(135): warning C4302: “类型强制转换”: 从“LPVOID”到“unsigned int”截断
+e:\tmp\dllinjection\inject\inject.cpp(177): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+  inject.vcxproj -> E:\tmp\DLLInjection\mydll\x64\Debug\inject.exe

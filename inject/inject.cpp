@@ -13,23 +13,6 @@ LPVOID pAddrStart = NULL;
 HANDLE hThreadHandle = NULL;
 HANDLE hDllHandle = NULL;
 #define _CRT_SECURE_NO_WARNINGS
-void Trace(const char* format, ...)
-{
-    //char buf[4096], *p = buf;
-    //va_list args;
-    //va_start(args, format);
-    ////p += _vsnprintf(p, sizeof buf - 1, format, args);
-    //p += _vsnprintf_s(p, sizeof buf - 1, sizeof buf - 1, format, args);
-    //va_end(args);
-    //while (p > buf && isspace(p[-1])) *--p = '\0';
-    //*p++ = '\r';
-    //*p++ = '\n';
-    //*p = '\0';
-    //std::cout << buf;
-    //OutputDebugString(buf);
-	printf(format);
-	printf("\n");
-}
 
 DWORD GetProcessIdByName(const char* ProcessName)
 {
@@ -58,39 +41,39 @@ DWORD GetProcessIdByName(const char* ProcessName)
 *****************************/
 int dll_inject(const char* pProcessName, const char* pDllName)
 {
-    Trace("dll inject start, processName:%s, dllPath:%s", pProcessName, pDllName);
+    printf("dll inject start, processName:%s, dllPath:%s\n", pProcessName, pDllName);
     BOOL bSuccess = FALSE;
     //根据进程名获取进程ID
     dwProcessID = GetProcessIdByName(pProcessName);
     if (dwProcessID == -1) {
-        Trace("%s未运行", pProcessName);
+        printf("%s未运行\n", pProcessName);
         return -1;
     }
-    Trace("%s进程ID为%d", pProcessName, dwProcessID);
+    printf("%s进程ID为%d\n", pProcessName, dwProcessID);
 
     //根据进程ID获取进程句柄
     hProcessHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwProcessID);
     if (hProcessHandle == NULL) {
-        Trace("OpenProcess获取进程句柄失败");
+        printf("OpenProcess获取进程句柄失败\n");
         return -1;
     }
 
     //用VirtualAllocEx在进程内申请内存
     pAddrStart = VirtualAllocEx(hProcessHandle, 0, 1024, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
     if (pAddrStart == NULL) {
-        Trace("进程内存申请失败!");
+        printf("进程内存申请失败!\n");
         return -1;
     }
-    Trace("申请进程内存的首地址为0x%x", (unsigned int)pAddrStart);
+    printf("申请进程内存的首地址为0x%x\n", (unsigned int)pAddrStart);
 
     //将需要运行的dll名写入申请的内存地址
     bSuccess = WriteProcessMemory(hProcessHandle, pAddrStart, pDllName, 1024, 0);
     if (!bSuccess) {
-        Trace("WriteProcessMemory失败！");
+        printf("WriteProcessMemory失败！\n");
         return -1;
     }
     //printf("memory of pAddrStart is:%s",pAddrStart);
-    Trace("attach start");
+    printf("attach start\n");
 
     //注入,即"LoadLibraryA"函数加载mydll.dll
     hThreadHandle = CreateRemoteThread(hProcessHandle,
@@ -101,13 +84,13 @@ int dll_inject(const char* pProcessName, const char* pDllName)
         0,
         0);
     if (hThreadHandle == NULL) {
-        Trace("在进程%s中注入%s失败", pProcessName, pDllName);
+        printf("在进程%s中注入%s失败\n", pProcessName, pDllName);
         return -1;
     }
 
     WaitForSingleObject(hThreadHandle, INFINITE);
     //到这里已经完成dll的加载即注入了，通过dll函数执行我们要完成的任务
-    Trace("attach end");
+    printf("attach end\n");
 
     //释放
     VirtualFreeEx(hProcessHandle, pAddrStart, 0, MEM_RELEASE);
@@ -131,30 +114,30 @@ int dll_free(const char* pProcessName, const char* pDllName)
     //根据进程名获取进程ID
     dwProcessID = GetProcessIdByName(pProcessName);
     if (dwProcessID == -1) {
-        Trace("%s未运行", pProcessName);
+        printf("%s未运行\n", pProcessName);
         return -1;
     }
-    Trace("%s进程ID为%d", pProcessName, dwProcessID);
+    printf("%s进程ID为%d\n", pProcessName, dwProcessID);
 
     //根据进程ID获取进程句柄
     hProcessHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwProcessID);
     if (hProcessHandle == NULL) {
-        Trace("OpenProcess获取进程句柄失败");
+        printf("OpenProcess获取进程句柄失败\n");
         return -1;
     }
 
     //用VirtualAllocEx在进程内申请内存
     pAddrStart = VirtualAllocEx(hProcessHandle, 0, 1024, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
     if (pAddrStart == NULL) {
-        Trace("进程内存申请失败!");
+        printf("进程内存申请失败!\n");
         return -1;
     }
-    Trace("申请进程内存的首地址为0x%x", (unsigned int)pAddrStart);
+    printf("申请进程内存的首地址为0x%x\n", (unsigned int)pAddrStart);
 
     //将需要运行的dll名写入申请的内存地址
     bSuccess = WriteProcessMemory(hProcessHandle, pAddrStart, pDllName, 1024, 0);
     if (!bSuccess) {
-        Trace("WriteProcessMemory失败！");
+        printf("WriteProcessMemory失败！\n");
         return -1;
     }
 
@@ -194,11 +177,11 @@ int main(int argc, char *argv[])
     int start = runPath.find_last_of("\\");
     std::string dllPath = runPath.substr(0, start + 1) + "mydll.dll";
 
-    Trace("dll inject");
+    printf("dll inject\n");
     dll_inject("mspaint.exe", dllPath.c_str());
 
-    Trace("dll free");
+    printf("dll free\n");
     dll_free("mspaint.exe", "mydll.dll");
 
-    Trace("exit");
+    printf("exit\n");
 }
